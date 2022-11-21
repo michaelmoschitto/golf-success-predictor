@@ -32,8 +32,8 @@ JSON request format:
             "Average Score": _,
             "Average SG Total": _,
             "Points": _
-        "scaler": [MinMax, Standard, None]
-        "model": _,
+        "scaler": ["MinMax", "Standard", "None"]
+        "model": [Model name from *models/ folder, omit .pkl file extension],
     }
 Example request:
     {
@@ -44,7 +44,7 @@ Example request:
             "Points": 700
         },
         "scaler": "MinMax",
-        "model": "RidgeRegressor"
+        "model": "DecisionTree"
     }
 
 returns: JSON object with id and prediction
