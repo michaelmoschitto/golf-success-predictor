@@ -12,7 +12,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
-def import_dataset(path_to_csv, split_train_test=True):
+def import_dataset(path_to_csv, split_train_test=True, numpy_format=True):
     """
     This will import the golf dataset, preprocess it, and return Dataframe objects.
 
@@ -64,7 +64,10 @@ def import_dataset(path_to_csv, split_train_test=True):
         X_train[cols_to_scale] = scaler.fit_transform(X_train[cols_to_scale])
         X_test[cols_to_scale] = scaler.transform(X_test[cols_to_scale])
 
-        return X_train.to_numpy(), X_test.to_numpy(), Y_train.to_numpy(), Y_test.to_numpy()
+        if numpy_format:
+            return X_train.to_numpy(), X_test.to_numpy(), Y_train.to_numpy(), Y_test.to_numpy()
+        else:
+            return X_train, X_test, Y_train, Y_test
     
     else:
         # Z-score normalize data
@@ -77,7 +80,10 @@ def import_dataset(path_to_csv, split_train_test=True):
         
         X[cols_to_scale] = scaler.fit_transform(X[cols_to_scale])
 
-        return X.to_numpy(), Y.to_numpy()
+        if numpy_format:
+            return X.to_numpy(), Y.to_numpy()
+        else:
+            return X, Y
 
     
 
