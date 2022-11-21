@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import os
-import time
 import json
 import numpy as np
 from flask import Flask, request, jsonify
@@ -11,27 +10,20 @@ import pickle
 
 app = Flask(__name__)
 
-# Create route for each model
-
-def bad_request(message):
-    response = jsonify({'message': message})
-    response.status_code = 400
-    return response
-
 
 """
-API runs a select model for PGA Success Prediction
+API runs ML model for PGA Success Prediction
 
 Route: http://localhost:8080/api/predictPGASuccess
 Request Type: POST
 
 JSON request format:
     {
-        "id" : _,
+        "id" : [Integer],
         "data" :{
-            "Average Score": _,
-            "Average SG Total": _,
-            "Points": _
+            "Average Score": [Float],
+            "Average SG Total": [Float],
+            "Points": [Float]
         "scaler": ["MinMax", "Standard", "None"]
         "model": [Model name from *models/ folder, omit .pkl file extension],
     }
@@ -48,13 +40,13 @@ Example request:
     }
 
 returns: JSON object with id and prediction
-        - If error occurs, a detailed JSON error message will be returned
-
+        - If error occurs, a detailed JSON error message will be returned through API request
 """
 @app.route('/api/predictPGASuccess', methods=['POST'])
 def predictPGASuccess():
 
     jsonObj = request.json
+
 
     # Check if JSON is passed with correct keys
     if not jsonObj: 
@@ -66,6 +58,8 @@ def predictPGASuccess():
 
     # Request ID
     req_id = str(jsonObj['id'])
+
+
 
     # Feature key validation 
     features = ['Average Score', 'Average SG Total', 'Points']
@@ -79,6 +73,8 @@ def predictPGASuccess():
 
     for key in feats.keys():
         feats[key] = [float(feats[key])]
+
+
 
     # Scaler key validation
     scaler = str(jsonObj['scaler'])
@@ -99,6 +95,7 @@ def predictPGASuccess():
 
 
     
+
     # Model key validation
     modelName = str(jsonObj['model'])
     modelPath = 'models/' + modelName + '.pkl'
@@ -106,7 +103,7 @@ def predictPGASuccess():
         return bad_request('Not a valid model name, select from models folder: DecisionTree, LinearRegressor, NN, ect.')
     
     
-    # Load model and predict on data
+    # Load model and generate prediction
     file = open(modelPath, 'rb')
     model = pickle.load(file)
     file.close()
@@ -118,6 +115,23 @@ def predictPGASuccess():
     ret['prediction'] = str(prediction[0])
 
     return json.dumps(ret) 
+
+
+"""
+Returns JSON error message
+
+    Params:
+    message: String to jsonify
+
+    Returns: JSON object
+"""
+def bad_request(message):
+    response = jsonify({'message': message})
+    response.status_code = 400
+    return response
+
+
+
 
 
 if __name__ == '__main__':
