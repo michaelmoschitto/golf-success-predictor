@@ -6,10 +6,11 @@ import numpy as np
 from flask import Flask, request, jsonify
 import pickle
 import pickle
+from flask_cors import CORS
 
 
 app = Flask(__name__)
-
+cors = CORS(app)
 
 """
 API runs ML model for PGA Success Prediction
